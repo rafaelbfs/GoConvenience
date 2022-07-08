@@ -18,6 +18,16 @@ type AssertValue[A comparable] struct {
 	val  A
 }
 
+type PointerAssertion[A any] struct {
+	Assertion
+	test    *testing.T
+	pointer *A
+}
+
+func AssertPointer[A any](tst *testing.T, pointer *A) PointerAssertion[A] {
+	return PointerAssertion[A]{test: tst, pointer: pointer}
+}
+
 // AssertThat[A comparable] creates an AssertValue holding a concrete value of type A
 func AssertThat[A comparable](tst *testing.T, value A) AssertValue[A] {
 	return AssertValue[A]{test: tst, val: value}
@@ -30,6 +40,18 @@ func (it AssertValue[A]) EqualsTo(otherVal A) {
 		return
 	}
 	it.test.Errorf("Test failed %v is not equal to %v", it.val, otherVal)
+}
+
+func (it PointerAssertion[A]) NotNil() {
+	if it.pointer == nil {
+		it.test.Errorf("Test failed, value is null")
+	}
+}
+
+func (it PointerAssertion[A]) IsNil() {
+	if it.pointer != nil {
+		it.test.Errorf("Test failed, value is present")
+	}
 }
 
 // (it AssertValue[A]) Satisfies(predicate Predicate[A]) AssertValue[A]

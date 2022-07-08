@@ -57,5 +57,6 @@ func TestComposing(t *testing.T) {
 
 	for _, n := range onlyRoundNrs {
 		a.AssertThat(t, n).Satisfies(isRound)
+		a.AssertPointer(t, &n).NotNil()
 	}
 }
