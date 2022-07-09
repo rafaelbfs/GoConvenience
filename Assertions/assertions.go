@@ -73,6 +73,12 @@ func Assert(tst *testing.T) Assertion {
 	return Assertion{test: tst}
 }
 
+func (it Assertion) NoError(err error) {
+	if err != nil {
+		it.test.Errorf("Expected no error but got %v", err)
+	}
+}
+
 func (it Assertion) Condition(condition bool) TestCondition {
 	return TestCondition{test: it.test, cond: condition}
 }
