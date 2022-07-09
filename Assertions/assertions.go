@@ -24,6 +24,15 @@ type PointerAssertion[A any] struct {
 	pointer *A
 }
 
+type ErrorAssertion struct {
+	test *testing.T
+	err  error
+}
+
+func (it Assertion) ThatError(err error) ErrorAssertion {
+	return ErrorAssertion{test: it.test, err: err}
+}
+
 func AssertPointer[A any](tst *testing.T, pointer *A) PointerAssertion[A] {
 	return PointerAssertion[A]{test: tst, pointer: pointer}
 }
@@ -76,6 +85,25 @@ func Assert(tst *testing.T) Assertion {
 func (it Assertion) NoError(err error) {
 	if err != nil {
 		it.test.Errorf("Expected no error but got %v", err)
+	}
+}
+
+func (it ErrorAssertion) Matches(predicate TestPredicate[error]) {
+	if it.err == nil || !predicate(it.err) {
+		it.test.Errorf("Error %v does not match expectation", it.err)
+	}
+}
+
+func (it ErrorAssertion) IsNil() {
+	if it.err == nil {
+		return
+	}
+	it.test.Errorf("Error %v is not nil", it.err)
+}
+
+func (it ErrorAssertion) IsPresent() {
+	if it.err == nil {
+		it.test.Errorf("Expected an error to be present but none was found")
 	}
 }
 
