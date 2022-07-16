@@ -2,6 +2,7 @@ package convenience
 
 import (
 	assertions "github.com/rafaelbfs/GoConvenience/Assertions"
+	"os"
 	"strconv"
 	s "strings"
 	"testing"
@@ -46,4 +47,9 @@ func TestMapNvl(t *testing.T) {
 
 	_, err := strconv.Atoi(notNr)
 	assertions.Assert(t).ThatError(err).Matches(errorAtoi)
+}
+
+func TestTry(t *testing.T) {
+	m := Try(os.Open("dummy.txt")).ResultOrPanic()
+	assertions.AssertPointer(t, m).NotNil()
 }

@@ -1,5 +1,7 @@
 package convenience
 
+import "log"
+
 type Nullable[A any] struct {
 	val *A
 }
@@ -9,6 +11,11 @@ type Error struct {
 }
 
 type Maker[A any] func() *A
+
+type Maybe[R any] struct {
+	err    error
+	result R
+}
 
 func Nvl[A any](a *A) Nullable[A] {
 	return Nullable[A]{val: a}
@@ -69,4 +76,28 @@ func (err Error) AndHandle(handler func(err error)) {
 
 func (err Error) AndPanic() {
 	panic(err)
+}
+
+func LogAndDisregard(err Error) {
+	log.Printf("Error %v will be disregarded", err)
+}
+
+func Try[R any](result R, err error) Maybe[R] {
+	return Maybe[R]{err: err, result: result}
+}
+
+func (m Maybe[R]) ResultOrPanic() R {
+	if m.err != nil {
+		panic(m.err)
+	}
+	return m.result
+}
+
+// (m Maybe[R]) HandleErr(handler func(err error) R) R allows you to pass a function
+// which can return a default value for the result in case of error
+func (m Maybe[R]) HandleErr(handler func(err error) R) R {
+	if m.err != nil {
+		return handler(m.err)
+	}
+	return m.result
 }
