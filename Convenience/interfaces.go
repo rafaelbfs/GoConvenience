@@ -1,3 +1,10 @@
+/*
+ * Distributed under BSD 3-Clause License
+ *
+ * Copyright (c) 2022, Rafael Barros Felix, github.com/rafaelbfs
+ * All rights reserved.
+ */
+
 package convenience
 
 type Function[I any, R any] func(I) R
