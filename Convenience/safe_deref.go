@@ -100,6 +100,14 @@ func (m Maybe[R]) ResultOrPanic() R {
 	return m.result
 }
 
+func (m Maybe[R]) IsSuccessful() bool {
+	return m.err == nil
+}
+
+func (m Maybe[R]) HasError() bool {
+	return m.err != nil
+}
+
 // (m Maybe[R]) HandleErr(handler func(err error) R) R allows you to pass a function
 // which can return a default value for the result in case of error
 func (m Maybe[R]) HandleErr(handler func(err error) R) R {

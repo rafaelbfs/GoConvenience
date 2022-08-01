@@ -53,3 +53,9 @@ func TestTry(t *testing.T) {
 	m := Try(os.Open("dummy.txt")).ResultOrPanic()
 	assertions.AssertPointer(t, m).NotNil()
 }
+
+func TestPanic(t *testing.T) {
+	defer assertions.AssertPanic(t)
+
+	Try(os.Open("inexistent.txt")).ResultOrPanic()
+}

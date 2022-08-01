@@ -139,3 +139,19 @@ func (it TestCondition) IsFalse(messageOtherwise string) {
 func (it TestCondition) IsFalseV() {
 	it.IsFalse("Failure expected a condition to be false")
 }
+
+func AssertPanic(t *testing.T) {
+	if r := recover(); r != nil {
+		t.Logf("Recovered from panic: %v", r)
+		return
+	}
+	t.Errorf("Test failed, expected panic condition but nothing happened")
+}
+
+func AssertErrorSatisfies(t *testing.T, predicate TestPredicate[any]) {
+	if r := recover(); r != nil && predicate(r) {
+		t.Logf("Recovered from panic: %v", r)
+		return
+	}
+	t.Errorf("Test failed, panic condition didn't occur or does not satisfy given predicate")
+}
